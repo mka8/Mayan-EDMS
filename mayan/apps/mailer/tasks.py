@@ -27,3 +27,54 @@ def task_send_document(
         organization_installation_url=organization_installation_url,
         subject=subject, to=recipient
     )
+
+@app.task(ignore_result=True)
+def task_send_document_file(
+    body, sender, subject, recipient, user_mailer_id, as_attachment=False,
+    document_file_id=None, organization_installation_url=None
+):
+    DocumentFile = apps.get_model(
+        app_label='documents', model_name='DocumentFile'
+    )
+    UserMailer = apps.get_model(
+        app_label='mailer', model_name='UserMailer'
+    )
+
+    if document_file_id:
+        document_file = DocumentFile.objects.get(pk=document_file_id)
+    else:
+        document_file = None
+
+    user_mailer = UserMailer.objects.get(pk=user_mailer_id)
+
+    user_mailer.send_document(
+        as_attachment=as_attachment, body=body, document_file=document_file,
+        organization_installation_url=organization_installation_url,
+        subject=subject, to=recipient
+    )
+
+
+@app.task(ignore_result=True)
+def task_send_document_version(
+    body, sender, subject, recipient, user_mailer_id, as_attachment=False,
+    document_version_id=None, organization_installation_url=None
+):
+    DocumentVersion = apps.get_model(
+        app_label='documents', model_name='DocumentVersion'
+    )
+    UserMailer = apps.get_model(
+        app_label='mailer', model_name='UserMailer'
+    )
+
+    if document_version_id:
+        document_version = DocumentVersion.objects.get(pk=document_version_id)
+    else:
+        document_version = None
+
+    user_mailer = UserMailer.objects.get(pk=user_mailer_id)
+
+    user_mailer.send_document(
+        as_attachment=as_attachment, body=body, document_version=document_version,
+        organization_installation_url=organization_installation_url,
+        subject=subject, to=recipient
+    )

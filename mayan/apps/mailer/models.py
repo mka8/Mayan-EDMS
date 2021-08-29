@@ -188,8 +188,8 @@ class UserMailer(models.Model):
                 target=self
             )
 
-    def send_document(
-        self, document, to, as_attachment=False, body='', cc=None, bcc=None,
+    def send_document_version(
+        self, document, to, body='', cc=None, bcc=None,
         organization_installation_url='', reply_to=None, subject='',
         _user=None
     ):
@@ -198,9 +198,82 @@ class UserMailer(models.Model):
         """
         context_dictionary = {
             'link': furl(organization_installation_url).join(
-                document.get_absolute_url()
+                document_version.get_absolute_url()
             ).tostr(),
             'document': document
+        }
+
+        body_template = Template(template_string=body)
+        body_html_content = body_template.render(
+            context=context_dictionary
+        )
+
+        subject_template = Template(template_string=subject)
+        subject_text = strip_tags(
+            subject_template.render(context=context_dictionary)
+        )
+
+        return self.send(
+            cc=cc, bcc=bcc, body=body_html_content, reply_to=reply_to,
+            subject=subject_text, to=to, _event_action_object=document,
+            _user=_user
+        )
+
+    def send_document_file(
+        self, document_file, to, as_attachment=False, body='', cc=None,
+        bcc=None, organization_installation_url='', reply_to=None, subject='',
+        _user=None
+    ):
+        """
+        Send a document file using this user mailing profile.
+        """
+        context_dictionary = {
+            'link': furl(organization_installation_url).join(
+                document_version.get_absolute_url()
+            ).tostr(),
+            'document_file': document_file
+        }
+
+        body_template = Template(template_string=body)
+        body_html_content = body_template.render(
+            context=context_dictionary
+        )
+
+        subject_template = Template(template_string=subject)
+        subject_text = strip_tags(
+            subject_template.render(context=context_dictionary)
+        )
+
+        attachments = []
+        if as_attachment:
+            with document_file.open() as file_object:
+                attachments.append(
+                    {
+                        'content': file_object.read(),
+                        'filename': document_file.label,
+                        'mimetype': document_file.mimetype
+                    }
+                )
+
+        return self.send(
+            attachments=attachments, cc=cc, bcc=bcc, body=body_html_content,
+            reply_to=reply_to, subject=subject_text, to=to,
+            _event_action_object=document_file, _user=_user
+        )
+
+    def send_document_version(
+        self, document_version, to, as_attachment=False, body='', cc=None,
+        bcc=None, organization_installation_url='', reply_to=None, subject='',
+        _user=None
+    ):
+        """
+        Send a document version using this user mailing profile.
+        """
+        context_dictionary = {
+            'link': furl(organization_installation_url).join(
+                document_version.get_absolute_url()
+            ).tostr(),
+            'document_version': document_version
         }
 
         body_template = Template(template_string=body)
@@ -217,13 +290,13 @@ class UserMailer(models.Model):
         if as_attachment:
             with TemporaryFile() as file_object:
                 logger.debug('exporting document to send via email')
-                document.version_active.export(file_object=file_object)
+                document_version.export(file_object=file_object)
                 file_object.seek(0)
 
                 attachments.append(
                     {
                         'content': file_object.read(),
-                        'filename': document.label,
+                        'filename': document_version.label,
                         'mimetype': DOCUMENT_VERSION_EXPORT_MIMETYPE
                     }
                 )
@@ -231,7 +304,7 @@ class UserMailer(models.Model):
         return self.send(
             attachments=attachments, cc=cc, bcc=bcc, body=body_html_content,
             reply_to=reply_to, subject=subject_text, to=to,
-            _event_action_object=document, _user=_user
+            _event_action_object=document_version, _user=_user
         )
 
     def test(self, to):

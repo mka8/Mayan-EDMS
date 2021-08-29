@@ -16,8 +16,14 @@ from mayan.apps.views.html_widgets import TwoStateWidget
 from .classes import MailerBackend
 from .events import event_email_sent
 from .links import (
-    link_send_document_link, link_send_document_attachment,
-    link_send_multiple_document_attachment, link_send_multiple_document_link,
+    link_send_document_link, link_send_document_link_multiple,
+    link_send_document_file_attachment,
+    link_send_document_file_attachment_multiple,
+    link_send_document_file_link, link_send_document_file_link_multiple,
+    link_send_document_version_attachment,
+    link_send_document_version_attachment_multiple,
+    link_send_document_version_link,
+    link_send_document_version_link_multiple,
     link_user_mailer_create, link_user_mailer_delete, link_user_mailer_edit,
     link_user_mailer_list, link_user_mailer_setup, link_user_mailer_test
 )
@@ -40,6 +46,12 @@ class MailerApp(MayanAppConfig):
 
         Document = apps.get_model(
             app_label='documents', model_name='Document'
+        )
+        DocumentFile = apps.get_model(
+            app_label='documents', model_name='DocumentFile'
+        )
+        DocumentVersion = apps.get_model(
+            app_label='documents', model_name='DocumentVersion'
         )
 
         UserMailer = self.get_model(model_name='UserMailer')
@@ -95,18 +107,53 @@ class MailerApp(MayanAppConfig):
             )
         )
 
+        # Document
+
         menu_multi_item.bind_links(
             links=(
-                link_send_multiple_document_attachment,
-                link_send_multiple_document_link
+                link_send_document_link_multiple,
             ), sources=(Document,)
         )
 
         menu_object.bind_links(
             links=(
-                link_send_document_link, link_send_document_attachment
+                link_send_document_link,
             ), sources=(Document,)
         )
+
+        # Document file
+
+        menu_multi_item.bind_links(
+            links=(
+                link_send_document_file_attachment_multiple,
+                link_send_document_file_link_multiple
+            ), sources=(DocumentFile,)
+        )
+
+        menu_object.bind_links(
+            links=(
+                link_send_document_file_link,
+                link_send_document_file_attachment
+            ), sources=(DocumentFile,)
+        )
+
+        # Document version
+
+        menu_multi_item.bind_links(
+            links=(
+                link_send_document_version_attachment_multiple,
+                link_send_document_version_link_multiple
+            ), sources=(DocumentVersion,)
+        )
+
+        menu_object.bind_links(
+            links=(
+                link_send_document_version_link,
+                link_send_document_version_attachment
+            ), sources=(DocumentVersion,)
+        )
+
+        # Mailing profile
 
         menu_object.bind_links(
             links=(

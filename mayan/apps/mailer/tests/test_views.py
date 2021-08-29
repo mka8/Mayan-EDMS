@@ -257,7 +257,7 @@ class MailerViewsTestCase(
         self.assertEqual(events[0].verb, event_email_sent.id)
 
 
-class MailDocumentViewsTestCase(
+class MailDocumentFileViewsTestCase(
     MailerTestMixin, MailerViewTestMixin, GenericDocumentViewTestCase
 ):
     def test_mail_link_view_no_permission(self):
