@@ -44,8 +44,30 @@ class MailerBackendBase(AppsModuleLoaderMixin):
 
     @classmethod
     def get_class_fields(cls):
-        backend_field_list = getattr(cls, 'fields', {}).keys()
+        backend_field_list = getattr(cls, 'fields', {})
         return getattr(cls, 'class_fields', backend_field_list)
+
+    @classmethod
+    def get_field_order(cls):
+        return getattr(cls, 'field_order')
+
+    @classmethod
+    def get_form_schema(cls):
+        result = {
+            'fields': cls.get_class_fields(),
+            'widgets': cls.get_widgets()
+        }
+
+        field_order = cls.get_field_order()
+
+        if field_order:
+            result['field_order'] = field_order
+
+        return result
+
+    @classmethod
+    def get_widgets(cls):
+        return getattr(cls, 'widgets', {})
 
 
 class MailerBackend(MailerBackendBase, metaclass=MailerBackendMetaclass):

@@ -11,7 +11,7 @@ from .literals import TEST_EMAIL_ADDRESS, TEST_EMAIL_FROM_ADDRESS
 from .mixins import DocumentMailerViewTestMixin, MailerTestMixin
 
 
-class MailDocumentFileViewsTestCase(
+class MailDocumentViewTestCase(
     DocumentMailerViewTestMixin, MailerTestMixin, GenericDocumentViewTestCase
 ):
     auto_upload_test_document = False
@@ -61,7 +61,7 @@ class MailDocumentFileViewsTestCase(
         self.assertEqual(events.count(), 1)
 
         self.assertEqual(events[0].action_object, self.test_document)
-        self.assertEqual(events[0].actor, self.test_user_mailer)
+        self.assertEqual(events[0].actor, self._test_case_user)
         self.assertEqual(events[0].target, self.test_user_mailer)
         self.assertEqual(events[0].verb, event_email_sent.id)
 

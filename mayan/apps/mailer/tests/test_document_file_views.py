@@ -12,7 +12,7 @@ from .literals import TEST_EMAIL_ADDRESS, TEST_EMAIL_FROM_ADDRESS
 from .mixins import DocumentFileMailerViewTestMixin, MailerTestMixin
 
 
-class MailDocumentFileViewsTestCase(
+class MailDocumentFileViewTestCase(
     DocumentFileMailerViewTestMixin, MailerTestMixin, GenericDocumentViewTestCase
 ):
     def test_document_file_send_link_view_no_permission(self):
@@ -56,7 +56,7 @@ class MailDocumentFileViewsTestCase(
         self.assertEqual(events.count(), 1)
 
         self.assertEqual(events[0].action_object, self.test_document_file)
-        self.assertEqual(events[0].actor, self.test_user_mailer)
+        self.assertEqual(events[0].actor, self._test_case_user)
         self.assertEqual(events[0].target, self.test_user_mailer)
         self.assertEqual(events[0].verb, event_email_sent.id)
 
@@ -126,7 +126,7 @@ class MailDocumentFileViewsTestCase(
         self.assertEqual(events.count(), 1)
 
         self.assertEqual(events[0].action_object, self.test_document_file)
-        self.assertEqual(events[0].actor, self.test_user_mailer)
+        self.assertEqual(events[0].actor, self._test_case_user)
         self.assertEqual(events[0].target, self.test_user_mailer)
         self.assertEqual(events[0].verb, event_email_sent.id)
 

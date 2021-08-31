@@ -11,8 +11,6 @@ from django.utils.html import strip_tags
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 
-from mayan.apps.documents.literals import DOCUMENT_VERSION_EXPORT_MIMETYPE
-from mayan.apps.storage.utils import TemporaryFile
 from mayan.apps.templating.classes import Template
 
 from .classes import NullBackend
@@ -188,50 +186,22 @@ class UserMailer(models.Model):
                 target=self
             )
 
-    def send_document(
-        self, document, to, body='', cc=None, bcc=None,
-        organization_installation_url='', reply_to=None, subject='',
-        _user=None
+    def send_object(
+        self, obj, to, as_attachment=False, body='', cc=None,
+        content_function_dotted_path=None, bcc=None,
+        mime_type_function_dotted_path=None,
+        object_name=None, organization_installation_url='',
+        reply_to=None, subject='', _user=None
     ):
         """
-        Send a document using this user mailing profile.
+        Send an object file using this user mailing profile.
         """
         context_dictionary = {
             'link': furl(organization_installation_url).join(
-                document.get_absolute_url()
+                obj.get_absolute_url()
             ).tostr(),
-            'document': document
-        }
-
-        body_template = Template(template_string=body)
-        body_html_content = body_template.render(
-            context=context_dictionary
-        )
-
-        subject_template = Template(template_string=subject)
-        subject_text = strip_tags(
-            subject_template.render(context=context_dictionary)
-        )
-
-        return self.send(
-            cc=cc, bcc=bcc, body=body_html_content, reply_to=reply_to,
-            subject=subject_text, to=to, _event_action_object=document,
-            _user=_user
-        )
-
-    def send_document_file(
-        self, document_file, to, as_attachment=False, body='', cc=None,
-        bcc=None, organization_installation_url='', reply_to=None, subject='',
-        _user=None
-    ):
-        """
-        Send a document file using this user mailing profile.
-        """
-        context_dictionary = {
-            'link': furl(organization_installation_url).join(
-                document_file.get_absolute_url()
-            ).tostr(),
-            'document_file': document_file
+            'object': obj,
+            'object_name': object_name
         }
 
         body_template = Template(template_string=body)
@@ -246,65 +216,40 @@ class UserMailer(models.Model):
 
         attachments = []
         if as_attachment:
-            with document_file.open() as file_object:
+            if not content_function_dotted_path:
+                raise ValueError(
+                    'Must provide `content_function_dotted_path` '
+                    'to allow sending the object as an attachment.'
+                )
+
+            if not mime_type_function_dotted_path:
+                raise ValueError(
+                    'Must provide `mime_type_function_dotted_path` to '
+                    'allow sending the object as an attachment.'
+                )
+
+            content_function = import_string(
+                dotted_path=content_function_dotted_path
+            )
+
+            mime_type_function = import_string(
+                dotted_path=mime_type_function_dotted_path
+            )
+            mime_type = mime_type_function(obj=obj)
+
+            with content_function(obj=obj) as file_object:
                 attachments.append(
                     {
                         'content': file_object.read(),
-                        'filename': document_file.filename,
-                        'mimetype': document_file.mimetype
+                        'filename': str(obj),
+                        'mimetype': mime_type
                     }
                 )
 
         return self.send(
             attachments=attachments, cc=cc, bcc=bcc, body=body_html_content,
             reply_to=reply_to, subject=subject_text, to=to,
-            _event_action_object=document_file, _user=_user
-        )
-
-    def send_document_version(
-        self, document_version, to, as_attachment=False, body='', cc=None,
-        bcc=None, organization_installation_url='', reply_to=None, subject='',
-        _user=None
-    ):
-        """
-        Send a document version using this user mailing profile.
-        """
-        context_dictionary = {
-            'link': furl(organization_installation_url).join(
-                document_version.get_absolute_url()
-            ).tostr(),
-            'document_version': document_version
-        }
-
-        body_template = Template(template_string=body)
-        body_html_content = body_template.render(
-            context=context_dictionary
-        )
-
-        subject_template = Template(template_string=subject)
-        subject_text = strip_tags(
-            subject_template.render(context=context_dictionary)
-        )
-
-        attachments = []
-        if as_attachment:
-            with TemporaryFile() as file_object:
-                logger.debug('exporting document to send via email')
-                document_version.export(file_object=file_object)
-                file_object.seek(0)
-
-                attachments.append(
-                    {
-                        'content': file_object.read(),
-                        'filename': str(document_version),
-                        'mimetype': DOCUMENT_VERSION_EXPORT_MIMETYPE
-                    }
-                )
-
-        return self.send(
-            attachments=attachments, cc=cc, bcc=bcc, body=body_html_content,
-            reply_to=reply_to, subject=subject_text, to=to,
-            _event_action_object=document_version, _user=_user
+            _event_action_object=obj, _user=_user
         )
 
     def test(self, to):

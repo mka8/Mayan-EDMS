@@ -2,10 +2,10 @@ from django.conf.urls import url
 
 from .views.document_views import MailDocumentLinkView
 from .views.document_file_views import (
-    MailDocumentFileLinkView, MailDocumentFileView
+    MailDocumentFileLinkView, MailDocumentFileAttachmentView
 )
 from .views.document_version_views import (
-    MailDocumentVersionLinkView, MailDocumentVersionView
+    MailDocumentVersionLinkView, MailDocumentVersionAttachmentView
 )
 from .views.mailing_profile_views import (
     UserMailerBackendSelectionView, UserMailingCreateView,
@@ -41,12 +41,12 @@ urlpatterns_document_file = [
     url(
         regex=r'^documents/files/(?P<document_file_id>\d+)/send/attachment/$',
         name='send_document_file_attachment',
-        view=MailDocumentFileView.as_view()
+        view=MailDocumentFileAttachmentView.as_view()
     ),
     url(
         regex=r'^documents/files/multiple/send/attachment/$',
         name='send_document_file_attachment_multiple',
-        view=MailDocumentFileView.as_view()
+        view=MailDocumentFileAttachmentView.as_view()
     ),
 ]
 
@@ -64,12 +64,12 @@ urlpatterns_document_version = [
     url(
         regex=r'^documents/versions/(?P<document_version_id>\d+)/send/attachment/$',
         name='send_document_version_attachment',
-        view=MailDocumentVersionView.as_view()
+        view=MailDocumentVersionAttachmentView.as_view()
     ),
     url(
         regex=r'^documents/versions/multiple/send/attachment/$',
         name='send_document_version_attachment_multiple',
-        view=MailDocumentVersionView.as_view()
+        view=MailDocumentVersionAttachmentView.as_view()
     ),
 ]
 

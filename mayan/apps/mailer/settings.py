@@ -9,13 +9,13 @@ from .literals import (
 
 namespace = SettingNamespace(label=_('Mailing'), name='mailer')
 
-setting_document_subject_template = namespace.add_setting(
+setting_attachment_subject_template = namespace.add_setting(
     default=DEFAULT_DOCUMENT_SUBJECT_TEMPLATE,
     global_name='MAILER_DOCUMENT_SUBJECT_TEMPLATE', help_text=_(
         'Template for the document email form subject line.'
     )
 )
-setting_document_body_template = namespace.add_setting(
+setting_attachment_body_template = namespace.add_setting(
     default=DEFAULT_DOCUMENT_BODY_TEMPLATE,
     global_name='MAILER_DOCUMENT_BODY_TEMPLATE', help_text=_(
         'Template for the document email form body text. Can include HTML.'

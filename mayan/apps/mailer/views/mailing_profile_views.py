@@ -64,14 +64,19 @@ class UserMailingCreateView(SingleObjectDynamicFormCreateView):
 
     def get_form_schema(self):
         backend = self.get_backend()
-        result = {
-            'fields': backend.fields,
-            'widgets': getattr(backend, 'widgets', {})
-        }
-        if hasattr(backend, 'field_order'):
-            result['field_order'] = backend.field_order
 
-        return result
+        return backend.get_form_schema()
+        # ~ result = {
+            # ~ 'fields': backend.get_class_fields(),
+            # ~ 'widgets': backend.get_widgets()
+        # ~ }
+
+        # ~ field_order = backend.get_field_order()
+
+        # ~ if field_order:
+            # ~ result['field_order'] = field_order
+
+        # ~ return result
 
     def get_instance_extra_data(self):
         return {'backend_path': self.kwargs['class_path']}
@@ -102,14 +107,19 @@ class UserMailingEditView(SingleObjectDynamicFormEditView):
 
     def get_form_schema(self):
         backend = self.object.get_backend()
-        result = {
-            'fields': backend.fields,
-            'widgets': getattr(backend, 'widgets', {})
-        }
-        if hasattr(backend, 'field_order'):
-            result['field_order'] = backend.field_order
 
-        return result
+        return backend.get_form_schema()
+
+    # ~ def get_form_schema(self):
+        # ~ backend = self.object.get_backend()
+        # ~ result = {
+            # ~ 'fields': backend.fields,
+            # ~ 'widgets': getattr(backend, 'widgets', {})
+        # ~ }
+        # ~ if hasattr(backend, 'field_order'):
+            # ~ result['field_order'] = backend.field_order
+
+        # ~ return result
 
 
 class UserMailerListView(SingleObjectListView):

@@ -201,8 +201,8 @@ class DocumentMailingTestCase(MailerTestMixin, GenericDocumentTestCase):
 
         self._clear_events()
 
-        self.test_user_mailer.send_document(
-            document=self.test_document, to=TEST_EMAIL_ADDRESS
+        self.test_user_mailer.send_object(
+            obj=self.test_document, to=TEST_EMAIL_ADDRESS
         )
 
         self.assertEqual(len(mail.outbox), 1)
@@ -224,8 +224,8 @@ class DocumentFileMailingTestCase(MailerTestMixin, GenericDocumentTestCase):
 
         self._clear_events()
 
-        self.test_user_mailer.send_document_file(
-            as_attachment=True, document_file=self.test_document_file,
+        self.test_user_mailer.send_object(
+            as_attachment=True, obj=self.test_document_file,
             to=TEST_EMAIL_ADDRESS
         )
 
@@ -254,8 +254,8 @@ class DocumentFileMailingTestCase(MailerTestMixin, GenericDocumentTestCase):
 
         self._clear_events()
 
-        self.test_user_mailer.send_document_file(
-            document_file=self.test_document_file, to=TEST_EMAIL_ADDRESS
+        self.test_user_mailer.send_object(
+            obj=self.test_document_file, to=TEST_EMAIL_ADDRESS
         )
 
         self.assertEqual(len(mail.outbox), 1)
@@ -280,8 +280,8 @@ class DocumentVersionMailingTestCase(
 
         self._clear_events()
 
-        self.test_user_mailer.send_document_version(
-            as_attachment=True, document_version=self.test_document_version,
+        self.test_user_mailer.send_object(
+            as_attachment=True, obj=self.test_document_version,
             to=TEST_EMAIL_ADDRESS
         )
 
@@ -310,8 +310,8 @@ class DocumentVersionMailingTestCase(
 
         self._clear_events()
 
-        self.test_user_mailer.send_document_version(
-            document_version=self.test_document_version,
+        self.test_user_mailer.send_object(
+            obj=self.test_document_version,
             to=TEST_EMAIL_ADDRESS
         )
 

@@ -13,13 +13,13 @@ from .classes import MailerBackend
 from .models import UserMailer
 from .permissions import permission_user_mailer_use
 from .settings import (
-    setting_document_body_template, setting_document_subject_template,
+    setting_attachment_body_template, setting_attachment_subject_template,
     setting_document_link_body_template, setting_document_link_subject_template
 )
 from .validators import validate_email_multiple
 
 
-class DocumentMailForm(forms.Form):
+class ObjectMailForm(forms.Form):
     def __init__(self, *args, **kwargs):
         as_attachment = kwargs.pop('as_attachment', False)
         user = kwargs.pop('user', None)
@@ -27,11 +27,11 @@ class DocumentMailForm(forms.Form):
         if as_attachment:
             self.fields[
                 'subject'
-            ].initial = setting_document_subject_template.value
+            ].initial = setting_attachment_subject_template.value
 
             self.fields[
                 'body'
-            ].initial = setting_document_body_template.value % {
+            ].initial = setting_attachment_body_template.value % {
                 'project_title': setting_project_title.value,
                 'project_website': setting_project_url.value
             }
@@ -45,8 +45,8 @@ class DocumentMailForm(forms.Form):
             }
 
         queryset = AccessControlList.objects.restrict_queryset(
-            permission=permission_user_mailer_use, user=user,
-            queryset=UserMailer.objects.filter(enabled=True)
+            permission=permission_user_mailer_use,
+            queryset=UserMailer.objects.filter(enabled=True), user=user
         )
 
         self.fields['user_mailer'].queryset = queryset

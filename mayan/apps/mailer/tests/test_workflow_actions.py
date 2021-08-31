@@ -227,7 +227,7 @@ class DocumentEmailActionTemplateTestCase(
         self.assertEqual(
             mail.outbox[0].subject, self.test_document.metadata.first().value
         )
-        self.assertEqual(len(mail.outbox[0].attachments), 1)
+        self.assertEqual(len(mail.outbox[0].attachments), 0)
 
 
 class DocumentEmailActionViewTestCase(
