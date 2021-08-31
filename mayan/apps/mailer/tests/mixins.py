@@ -8,6 +8,72 @@ from .literals import (
 )
 
 
+class DocumentMailerViewTestMixin:
+    def _request_test_document_send_link_view(self):
+        return self.post(
+            viewname='mailer:send_document_link', kwargs={
+                'document_id': self.test_document.pk
+            }, data={
+                'email': getattr(
+                    self, 'test_email_address', TEST_EMAIL_ADDRESS
+                ),
+                'user_mailer': self.test_user_mailer.pk
+            },
+        )
+
+
+class DocumentFileMailerViewTestMixin:
+    def _request_test_document_file_send_link_view(self):
+        return self.post(
+            viewname='mailer:send_document_file_link', kwargs={
+                'document_file_id': self.test_document_file.pk
+            }, data={
+                'email': getattr(
+                    self, 'test_email_address', TEST_EMAIL_ADDRESS
+                ),
+                'user_mailer': self.test_user_mailer.pk
+            },
+        )
+
+    def _request_test_document_file_send_view(self):
+        return self.post(
+            viewname='mailer:send_document_file_attachment', kwargs={
+                'document_file_id': self.test_document_file.pk
+            }, data={
+                'email': getattr(
+                    self, 'test_email_address', TEST_EMAIL_ADDRESS
+                ),
+                'user_mailer': self.test_user_mailer.pk
+            }
+        )
+
+
+class DocumentVersionMailerViewTestMixin:
+    def _request_test_document_version_send_link_view(self):
+        return self.post(
+            viewname='mailer:send_document_version_link', kwargs={
+                'document_version_id': self.test_document_version.pk
+            }, data={
+                'email': getattr(
+                    self, 'test_email_address', TEST_EMAIL_ADDRESS
+                ),
+                'user_mailer': self.test_user_mailer.pk
+            },
+        )
+
+    def _request_test_document_version_send_view(self):
+        return self.post(
+            viewname='mailer:send_document_version_attachment', kwargs={
+                'document_version_id': self.test_document_version.pk
+            }, data={
+                'email': getattr(
+                    self, 'test_email_address', TEST_EMAIL_ADDRESS
+                ),
+                'user_mailer': self.test_user_mailer.pk
+            }
+        )
+
+
 class MailerTestMixin:
     def _create_test_user_mailer(self):
         self.test_user_mailer = UserMailer.objects.create(
@@ -24,30 +90,6 @@ class MailerTestMixin:
 
 
 class MailerViewTestMixin:
-    def _request_test_document_link_send_view(self):
-        return self.post(
-            viewname='mailer:send_document_link', kwargs={
-                'document_id': self.test_document.pk
-            }, data={
-                'email': getattr(
-                    self, 'test_email_address', TEST_EMAIL_ADDRESS
-                ),
-                'user_mailer': self.test_user_mailer.pk
-            },
-        )
-
-    def _request_test_document_send_view(self):
-        return self.post(
-            viewname='mailer:send_document_attachment', kwargs={
-                'document_id': self.test_document.pk
-            }, data={
-                'email': getattr(
-                    self, 'test_email_address', TEST_EMAIL_ADDRESS
-                ),
-                'user_mailer': self.test_user_mailer.pk
-            }
-        )
-
     def _request_test_user_mailer_create_view(self):
         return self.post(
             viewname='mailer:user_mailer_create', kwargs={

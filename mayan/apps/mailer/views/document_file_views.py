@@ -1,40 +1,22 @@
-from django.contrib import messages
-from django.http import Http404, HttpResponseRedirect
-from django.template import RequestContext
-from django.urls import reverse, reverse_lazy
 from django.utils.translation import ungettext, ugettext_lazy as _
 
 from mayan.apps.acls.models import AccessControlList
 from mayan.apps.documents.models.document_file_models import DocumentFile
 from mayan.apps.organizations.utils import get_organization_installation_url
-from mayan.apps.views.generics import (
-    FormView, MultipleObjectFormActionView, SingleObjectDeleteView,
-    SingleObjectDynamicFormCreateView, SingleObjectDynamicFormEditView,
-    SingleObjectListView
-)
-from mayan.apps.views.mixins import ExternalObjectViewMixin
+from mayan.apps.views.generics import MultipleObjectFormActionView
 
-from ..classes import MailerBackend
-from ..forms import (
-    DocumentMailForm, UserMailerBackendSelectionForm, UserMailerDynamicForm,
-    UserMailerTestForm
-)
-from ..icons import icon_mail_document_submit, icon_user_mailer_setup
-from ..links import link_user_mailer_create
-from ..models import UserMailer
+from ..forms import DocumentMailForm
 from ..permissions import (
-    permission_mailing_send_document_link, permission_mailing_send_document_attachment,
-    permission_user_mailer_create, permission_user_mailer_delete,
-    permission_user_mailer_edit, permission_user_mailer_use,
-    permission_user_mailer_view
+    permission_send_document_file_attachment,
+    permission_send_document_file_link, permission_user_mailer_use
 )
-from ..tasks import task_send_document_version
+from ..tasks import task_send_document_file
 
 
 class MailDocumentFileView(MultipleObjectFormActionView):
     as_attachment = True
     form_class = DocumentMailForm
-    object_permission = permission_mailing_send_document_attachment
+    object_permission = permission_send_document_file_attachment
     pk_url_kwarg = 'document_file_id'
     source_queryset = DocumentFile.valid
     success_message = _('%(count)d document file queued for email delivery')
@@ -49,8 +31,6 @@ class MailDocumentFileView(MultipleObjectFormActionView):
         queryset = self.object_list
 
         result = {
-            'submit_icon': icon_mail_document_submit,
-            'submit_label': _('Send'),
             'title': ungettext(
                 singular=self.title,
                 plural=self.title_plural,
@@ -80,7 +60,7 @@ class MailDocumentFileView(MultipleObjectFormActionView):
             permissions=(permission_user_mailer_use,), user=self.request.user
         )
 
-        task_send_document.apply_async(
+        task_send_document_file.apply_async(
             kwargs={
                 'as_attachment': self.as_attachment,
                 'body': form.cleaned_data['body'],
@@ -98,7 +78,7 @@ class MailDocumentFileView(MultipleObjectFormActionView):
 
 class MailDocumentFileLinkView(MailDocumentFileView):
     as_attachment = False
-    object_permission = permission_mailing_send_document_link
+    object_permission = permission_send_document_file_link
     success_message = _(
         '%(count)d document file link queued for email delivery'
     )

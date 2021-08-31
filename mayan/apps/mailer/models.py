@@ -111,7 +111,7 @@ class UserMailer(models.Model):
 
     def loads(self):
         """
-        Deserialize the stored backend data.
+        De-serialize the stored backend data.
         """
         return json.loads(s=self.backend_data)
 
@@ -133,7 +133,7 @@ class UserMailer(models.Model):
         """
         Send a simple email. There is no document or template knowledge.
         attachments is a list of dictionaries with the keys:
-        filename, content, and  mimetype.
+        filename, content, and mimetype.
         """
         recipient_list = split_recipient_list(recipients=[to])
 
@@ -188,7 +188,7 @@ class UserMailer(models.Model):
                 target=self
             )
 
-    def send_document_version(
+    def send_document(
         self, document, to, body='', cc=None, bcc=None,
         organization_installation_url='', reply_to=None, subject='',
         _user=None
@@ -198,7 +198,7 @@ class UserMailer(models.Model):
         """
         context_dictionary = {
             'link': furl(organization_installation_url).join(
-                document_version.get_absolute_url()
+                document.get_absolute_url()
             ).tostr(),
             'document': document
         }
@@ -229,7 +229,7 @@ class UserMailer(models.Model):
         """
         context_dictionary = {
             'link': furl(organization_installation_url).join(
-                document_version.get_absolute_url()
+                document_file.get_absolute_url()
             ).tostr(),
             'document_file': document_file
         }
@@ -250,7 +250,7 @@ class UserMailer(models.Model):
                 attachments.append(
                     {
                         'content': file_object.read(),
-                        'filename': document_file.label,
+                        'filename': document_file.filename,
                         'mimetype': document_file.mimetype
                     }
                 )
@@ -296,7 +296,7 @@ class UserMailer(models.Model):
                 attachments.append(
                     {
                         'content': file_object.read(),
-                        'filename': document_version.label,
+                        'filename': str(document_version),
                         'mimetype': DOCUMENT_VERSION_EXPORT_MIMETYPE
                     }
                 )

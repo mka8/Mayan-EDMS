@@ -2,28 +2,22 @@ from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.template import RequestContext
 from django.urls import reverse, reverse_lazy
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
-from mayan.apps.acls.models import AccessControlList
-from mayan.apps.documents.models import Document
-from mayan.apps.organizations.utils import get_organization_installation_url
 from mayan.apps.views.generics import (
-    FormView, MultipleObjectFormActionView, SingleObjectDeleteView,
-    SingleObjectDynamicFormCreateView, SingleObjectDynamicFormEditView,
-    SingleObjectListView
+    FormView, SingleObjectDeleteView, SingleObjectDynamicFormCreateView,
+    SingleObjectDynamicFormEditView, SingleObjectListView
 )
 from mayan.apps.views.mixins import ExternalObjectViewMixin
 
 from ..classes import MailerBackend
 from ..forms import (
-    DocumentMailForm, UserMailerBackendSelectionForm, UserMailerDynamicForm,
-    UserMailerTestForm
+    UserMailerBackendSelectionForm, UserMailerDynamicForm, UserMailerTestForm
 )
-from ..icons import icon_mail_document_submit, icon_user_mailer_setup
+from ..icons import icon_user_mailer_setup
 from ..links import link_user_mailer_create
 from ..models import UserMailer
 from ..permissions import (
-    permission_mailing_send_document_link, permission_mailing_send_document_attachment,
     permission_user_mailer_create, permission_user_mailer_delete,
     permission_user_mailer_edit, permission_user_mailer_use,
     permission_user_mailer_view

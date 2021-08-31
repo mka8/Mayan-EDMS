@@ -23,6 +23,7 @@ icon_document_file_send_multiple = Icon(
 icon_document_file_send_link_multiple = Icon(
     driver_name='fontawesome', symbol='envelope'
 )
+
 # Document version
 
 icon_document_version_send = Icon(
@@ -39,10 +40,6 @@ icon_document_version_send_link_multiple = Icon(
 )
 
 # Mailing profile
-
-icon_mail_document_submit = Icon(
-    driver_name='fontawesome', symbol='envelope'
-)
 
 icon_user_mailer_create = Icon(
     driver_name='fontawesome-dual', primary_symbol='envelope',

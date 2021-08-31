@@ -5,8 +5,8 @@ from mayan.celery import app
 
 @app.task(ignore_result=True)
 def task_send_document(
-    body, sender, subject, recipient, user_mailer_id, as_attachment=False,
-    document_id=None, organization_installation_url=None
+    body, sender, subject, recipient, user_mailer_id, document_id=None,
+    organization_installation_url=None
 ):
     Document = apps.get_model(
         app_label='documents', model_name='Document'
@@ -23,10 +23,11 @@ def task_send_document(
     user_mailer = UserMailer.objects.get(pk=user_mailer_id)
 
     user_mailer.send_document(
-        as_attachment=as_attachment, body=body, document=document,
+        body=body, document=document,
         organization_installation_url=organization_installation_url,
         subject=subject, to=recipient
     )
+
 
 @app.task(ignore_result=True)
 def task_send_document_file(
@@ -47,7 +48,7 @@ def task_send_document_file(
 
     user_mailer = UserMailer.objects.get(pk=user_mailer_id)
 
-    user_mailer.send_document(
+    user_mailer.send_document_file(
         as_attachment=as_attachment, body=body, document_file=document_file,
         organization_installation_url=organization_installation_url,
         subject=subject, to=recipient
@@ -73,7 +74,7 @@ def task_send_document_version(
 
     user_mailer = UserMailer.objects.get(pk=user_mailer_id)
 
-    user_mailer.send_document(
+    user_mailer.send_document_version(
         as_attachment=as_attachment, body=body, document_version=document_version,
         organization_installation_url=organization_installation_url,
         subject=subject, to=recipient

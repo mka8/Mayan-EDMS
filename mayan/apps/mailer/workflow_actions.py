@@ -8,11 +8,11 @@ from mayan.apps.document_states.classes import WorkflowAction
 from .models import UserMailer
 from .permissions import permission_user_mailer_use
 
-__all__ = ('EmailAction',)
+__all__ = ('DocumentEmailAction',)
 logger = logging.getLogger(name=__name__)
 
 
-class EmailAction(WorkflowAction):
+class DocumentEmailAction(WorkflowAction):
     fields = {
         'mailing_profile': {
             'label': _('Mailing profile'),

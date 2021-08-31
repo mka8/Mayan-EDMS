@@ -13,7 +13,7 @@ from mayan.apps.metadata.tests.mixins import MetadataTypeTestMixin
 from mayan.apps.testing.tests.base import GenericViewTestCase
 
 from ..permissions import permission_user_mailer_use
-from ..workflow_actions import EmailAction
+from ..workflow_actions import DocumentEmailAction
 
 from .literals import (
     TEST_EMAIL_ADDRESS, TEST_EMAIL_BODY, TEST_EMAIL_FROM_ADDRESS,
@@ -22,7 +22,7 @@ from .literals import (
 from .mixins import MailerTestMixin
 
 
-class EmailActionTestCase(
+class DocumentEmailActionTestCase(
     MailerTestMixin, WorkflowTemplateTestMixin, GenericDocumentTestCase
 ):
     auto_upload_test_document = False
@@ -31,7 +31,7 @@ class EmailActionTestCase(
         self._create_test_document_stub()
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,
@@ -48,7 +48,7 @@ class EmailActionTestCase(
         self._create_test_document_stub()
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,
@@ -67,7 +67,7 @@ class EmailActionTestCase(
         self._create_test_document_stub()
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,
@@ -96,7 +96,7 @@ class EmailActionTestCase(
                     'body': TEST_EMAIL_BODY,
                 }
             ),
-            action_path='mayan.apps.mailer.workflow_actions.EmailAction',
+            action_path='mayan.apps.mailer.workflow_actions.DocumentEmailAction',
             label='test email action', when=WORKFLOW_ACTION_ON_ENTRY,
         )
 
@@ -111,7 +111,7 @@ class EmailActionTestCase(
         self.assertEqual(mail.outbox[0].to, [TEST_EMAIL_ADDRESS])
 
 
-class EmailActionTemplateTestCase(
+class DocumentEmailActionTemplateTestCase(
     MetadataTypeTestMixin, MailerTestMixin, WorkflowTemplateTestMixin, ActionTestCase
 ):
     def test_email_action_recipient_template(self):
@@ -125,7 +125,7 @@ class EmailActionTemplateTestCase(
 
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': '{{{{ document.metadata_value_of.{} }}}}'.format(
@@ -153,7 +153,7 @@ class EmailActionTemplateTestCase(
 
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,
@@ -182,7 +182,7 @@ class EmailActionTemplateTestCase(
 
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,
@@ -209,7 +209,7 @@ class EmailActionTemplateTestCase(
 
         self._create_test_user_mailer()
 
-        action = EmailAction(
+        action = DocumentEmailAction(
             form_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,
@@ -230,7 +230,7 @@ class EmailActionTemplateTestCase(
         self.assertEqual(len(mail.outbox[0].attachments), 1)
 
 
-class EmailActionViewTestCase(
+class DocumentEmailActionViewTestCase(
     DocumentTestMixin, MailerTestMixin, WorkflowTemplateStateActionViewTestMixin,
     WorkflowTemplateTestMixin, GenericViewTestCase
 ):
@@ -245,7 +245,7 @@ class EmailActionViewTestCase(
         )
 
         response = self._request_test_workflow_template_state_action_create_get_view(
-            class_path='mayan.apps.mailer.workflow_actions.EmailAction'
+            class_path='mayan.apps.mailer.workflow_actions.DocumentEmailAction'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -263,7 +263,7 @@ class EmailActionViewTestCase(
         )
 
         response = self._request_test_workflow_template_state_action_create_post_view(
-            class_path='mayan.apps.mailer.workflow_actions.EmailAction',
+            class_path='mayan.apps.mailer.workflow_actions.DocumentEmailAction',
             extra_data={
                 'mailing_profile': self.test_user_mailer.pk,
                 'recipient': TEST_EMAIL_ADDRESS,

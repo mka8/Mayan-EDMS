@@ -28,9 +28,12 @@ from .links import (
     link_user_mailer_list, link_user_mailer_setup, link_user_mailer_test
 )
 from .permissions import (
-    permission_mailing_send_document_link, permission_mailing_send_document_attachment,
-    permission_user_mailer_delete, permission_user_mailer_edit,
-    permission_user_mailer_use, permission_user_mailer_view,
+    permission_send_document_link, permission_send_document_file_attachment,
+    permission_send_document_file_link,
+    permission_send_document_version_attachment,
+    permission_send_document_version_link, permission_user_mailer_delete,
+    permission_user_mailer_edit, permission_user_mailer_use,
+    permission_user_mailer_view
 )
 
 
@@ -95,7 +98,19 @@ class MailerApp(MayanAppConfig):
 
         ModelPermission.register(
             model=Document, permissions=(
-                permission_mailing_send_document_link, permission_mailing_send_document_attachment
+                permission_send_document_link,
+            )
+        )
+        ModelPermission.register(
+            model=DocumentFile, permissions=(
+                permission_send_document_file_attachment,
+                permission_send_document_file_link
+            )
+        )
+        ModelPermission.register(
+            model=DocumentVersion, permissions=(
+                permission_send_document_version_attachment,
+                permission_send_document_version_link
             )
         )
 
